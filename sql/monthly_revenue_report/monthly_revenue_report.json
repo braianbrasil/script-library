@@ -1,0 +1,9 @@
+{
+  "name": "monthly_revenue_report.sql",
+  "lang": "sql",
+  "folder": "reports",
+  "desc": "Aggregates monthly revenue by product category, includes YoY comparison and running totals.",
+  "tags": ["reports", "finance", "aggregation"],
+  "author": "vc",
+  "date": "2024-11-15"
+}
