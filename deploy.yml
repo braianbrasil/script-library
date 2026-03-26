@@ -1,4 +1,4 @@
-name: Deploy Script Library to GitHub Pages
+name: Build & Deploy Script Library
 
 on:
   push:
@@ -15,14 +15,65 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build-and-deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Build index.json
+        run: |
+          echo "Scanning for script metadata files..."
+
+          node -e "
+            const fs   = require('fs');
+            const path = require('path');
+
+            function walk(dir) {
+              let results = [];
+              for (const f of fs.readdirSync(dir)) {
+                const full = path.join(dir, f);
+                if (fs.statSync(full).isDirectory()) {
+                  results = results.concat(walk(full));
+                } else if (f.endsWith('.json') && f !== 'index.json' && f !== 'package.json') {
+                  results.push(full);
+                }
+              }
+              return results;
+            }
+
+            const files = walk('.');
+            const scripts = [];
+            let id = 1;
+
+            for (const file of files) {
+              try {
+                const meta = JSON.parse(fs.readFileSync(file, 'utf8'));
+
+                // Find matching script file (same name, different extension)
+                const base    = file.replace(/\.json$/, '');
+                const codeExt = meta.lang === 'sql' ? '.sql' : '.rb';
+                const codePath = base + codeExt;
+
+                let code = '';
+                if (fs.existsSync(codePath)) {
+                  code = fs.readFileSync(codePath, 'utf8');
+                }
+
+                scripts.push({ id: id++, ...meta, code });
+              } catch(e) {
+                console.warn('Skipping', file, e.message);
+              }
+            }
+
+            scripts.sort((a, b) => b.date.localeCompare(a.date));
+            fs.writeFileSync('index.json', JSON.stringify(scripts, null, 2));
+            console.log('Built index.json with', scripts.length, 'scripts.');
+          "
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

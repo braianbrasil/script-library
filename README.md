@@ -1,58 +1,34 @@
 # Script Library
 
-A searchable web portal for SQL and Ruby scripts, hosted on GitHub Pages.
+Searchable portal for SQL and Ruby scripts — hosted on GitHub Pages.
 
-## Live Portal
+**Live portal:** `https://braianbrasil.github.io/script-library/`
 
-Visit: `https://<your-username>.github.io/<repo-name>/`
+## Adding a new script
 
-## Structure
+1. Drop your `.sql` or `.rb` file in the right folder:
+   - `sql/reports/`, `sql/migrations/`, `sql/utils/`
+   - `ruby/etl/`, `ruby/automation/`, `ruby/utils/`
 
-```
-my-script-library/
-├── index.html              ← Web portal (search, browse, view scripts)
-├── README.md
-├── .gitignore
-├── .github/
-│   └── workflows/
-│       └── deploy.yml      ← Auto-deploys on every push to main
-├── sql/
-│   ├── reports/
-│   ├── migrations/
-│   └── utils/
-└── ruby/
-    ├── etl/
-    ├── automation/
-    └── utils/
-```
+2. Create a `.json` file with the **same name** next to it:
 
-## Adding a Script
-
-1. Drop your `.sql` or `.rb` file into the right folder
-2. Add an entry to the `SCRIPTS` array in `index.html`:
-
-```js
+```json
 {
-  id: 10,
-  lang: "sql",           // "sql" or "ruby"
-  folder: "reports",     // subfolder name
-  name: "my_script.sql",
-  desc: "Short description of what this script does.",
-  tags: ["tag1", "tag2"],
-  author: "yourname",
-  date: "2025-03-26",
-  code: `...paste your script here...`
+  "name": "my_script.sql",
+  "lang": "sql",
+  "folder": "reports",
+  "desc": "Short description of what this script does.",
+  "tags": ["tag1", "tag2"],
+  "author": "yourname",
+  "date": "2025-03-26"
 }
 ```
 
-3. Push to `main` — GitHub Actions deploys automatically in ~30 seconds.
+3. `git add . && git commit -m "add: my_script" && git push`
 
-## Setup (first time)
+GitHub Actions builds `index.json` automatically and deploys in ~30s.
 
-1. Go to repo **Settings → Pages**
-2. Under **Source**, select **GitHub Actions**
-3. Push any change to `main` to trigger first deploy
+## First-time setup
 
-## Team
-
-Add your teammates as collaborators under **Settings → Collaborators**.
+1. Repo → **Settings → Pages** → Source: **GitHub Actions**
+2. Push to `main` to trigger first deploy
