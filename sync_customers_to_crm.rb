@@ -1,6 +1,6 @@
 # sync_customers_to_crm.rb
-# Syncs new and updated customers to HubSpot CRM.
-# Run via cron or manually: ruby sync_customers_to_crm.rb
+# Syncs updated customers to HubSpot CRM.
+# Usage: ruby sync_customers_to_crm.rb
 
 require 'httparty'
 require 'logger'
@@ -16,12 +16,10 @@ class CrmSync
   def run
     customers = Customer.where('updated_at > ?', 24.hours.ago).to_a
     @log.info "Syncing #{customers.size} customers..."
-
     customers.each_slice(10) do |batch|
       upsert_batch(batch)
       sleep(0.1)
     end
-
     @log.info "Done."
   end
 

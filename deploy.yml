@@ -27,52 +27,56 @@ jobs:
 
       - name: Build index.json
         run: |
-          echo "Scanning for script metadata files..."
-
           node -e "
             const fs   = require('fs');
             const path = require('path');
 
             function walk(dir) {
               let results = [];
-              for (const f of fs.readdirSync(dir)) {
-                const full = path.join(dir, f);
-                if (fs.statSync(full).isDirectory()) {
+              if (!fs.existsSync(dir)) return results;
+              for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const full = path.join(dir, entry.name);
+                if (entry.isDirectory()) {
                   results = results.concat(walk(full));
-                } else if (f.endsWith('.json') && f !== 'index.json' && f !== 'package.json') {
+                } else if (
+                  entry.name.endsWith('.json') &&
+                  entry.name !== 'index.json' &&
+                  entry.name !== 'package.json'
+                ) {
                   results.push(full);
                 }
               }
               return results;
             }
 
-            const files = walk('.');
+            const jsonFiles = [...walk('sql'), ...walk('ruby')];
             const scripts = [];
             let id = 1;
 
-            for (const file of files) {
+            for (const jsonPath of jsonFiles) {
               try {
-                const meta = JSON.parse(fs.readFileSync(file, 'utf8'));
-
-                // Find matching script file (same name, different extension)
-                const base    = file.replace(/\.json$/, '');
-                const codeExt = meta.lang === 'sql' ? '.sql' : '.rb';
-                const codePath = base + codeExt;
+                const meta     = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+                const dir      = path.dirname(jsonPath);
+                const baseName = path.basename(jsonPath, '.json');
+                const ext      = meta.lang === 'ruby' ? '.rb' : '.sql';
+                const codePath = path.join(dir, baseName + ext);
 
                 let code = '';
                 if (fs.existsSync(codePath)) {
                   code = fs.readFileSync(codePath, 'utf8');
+                } else {
+                  console.warn('No code file found for:', jsonPath);
                 }
 
                 scripts.push({ id: id++, ...meta, code });
               } catch(e) {
-                console.warn('Skipping', file, e.message);
+                console.warn('Skipping', jsonPath, '-', e.message);
               }
             }
 
-            scripts.sort((a, b) => b.date.localeCompare(a.date));
+            scripts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
             fs.writeFileSync('index.json', JSON.stringify(scripts, null, 2));
-            console.log('Built index.json with', scripts.length, 'scripts.');
+            console.log('Built index.json with ' + scripts.length + ' scripts.');
           "
 
       - name: Setup Pages
