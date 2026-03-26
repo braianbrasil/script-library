@@ -1,5 +1,5 @@
 # sync_customers_to_crm.rb
-# Syncs updated customers to HubSpot CRM.
+# Syncs new and updated customers to HubSpot CRM.
 # Usage: ruby sync_customers_to_crm.rb
 
 require 'httparty'

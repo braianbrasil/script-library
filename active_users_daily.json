@@ -2,7 +2,7 @@
   "name": "active_users_daily.sql",
   "lang": "sql",
   "folder": "analytics",
-  "desc": "Daily active users (DAU) with 7-day rolling average.",
+  "desc": "Daily active users (DAU) report with 7-day rolling average.",
   "tags": ["analytics", "users", "dau"],
   "author": "jm",
   "date": "2024-12-02"
