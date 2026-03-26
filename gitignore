@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ruby
+*.gem
+*.rbc
+.bundle/
+vendor/bundle/
+log/
+tmp/
+
+# Credentials
+.env
+.env.*
+secrets.yml
