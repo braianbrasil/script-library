@@ -1,0 +1,9 @@
+{
+  "name": "nfe-reemitir.rb",
+  "lang": "ruby",
+  "folder": "ruby",
+  "desc": "Script para reemitir NFe do VMpay",
+  "tags": ["nfe"],
+  "author": "Bra",
+  "date": "2026-03-26"
+}

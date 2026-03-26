@@ -1,9 +1,0 @@
-{
-  "name": "sync_customers_to_crm.rb",
-  "lang": "ruby",
-  "folder": "etl",
-  "desc": "Syncs new and updated customer records from the database to HubSpot CRM via API.",
-  "tags": ["etl", "hubspot", "crm", "api"],
-  "author": "vc",
-  "date": "2025-02-10"
-}
